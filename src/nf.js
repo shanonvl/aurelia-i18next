@@ -7,8 +7,11 @@ export class NfValueConverter {
   }
 
   toView(value, formatOptions, locale, numberFormat) {
-    var nf = numberFormat || this.service.nf(formatOptions, locale || this.service.getLocale());
-
-    return nf.format(value);
+    let ret = value;
+    if(ret) {
+      var nf = numberFormat || this.service.nf(formatOptions, locale || this.service.getLocale());
+      ret = nf.format(value);
+    }
+    return ret;
   }
 }
