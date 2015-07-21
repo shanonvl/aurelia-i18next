@@ -32,12 +32,12 @@ export function configure(aurelia, cb){
     ret = new Promise((accept,reject) => {
         System['import']('Intl').then((poly) => {
           window.Intl = poly;
-          onIntlLoaded(aurelia,cb).then(accept,reject);
+          onIntlLoaded().then(accept,reject);
         });
     });
   }
   else {
-    ret = onIntlLoaded(aurelia, cb);
+    ret = onIntlLoaded();
   }
 
   return ret;
