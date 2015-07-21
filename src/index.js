@@ -20,5 +20,18 @@ export function configure(aurelia, cb){
   var instance = new I18N(aurelia.container.get(EventAggregator));
   aurelia.container.registerInstance(I18N, instance);
 
-  return cb(instance);
+  var ret = cb(instance),
+    promises = [];
+  // check whether Intl is available, otherwise load the polyfill
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl
+  if (window.Intl === undefined) {
+    promises.push(System['import']('Intl').then((poly) => {
+      window.Intl = poly;
+    }));
+  }
+  if(ret && (ret instanceof Promise)) {
+    promises.push(ret);
+  }
+  return promises.length > 0 ? Promise.all(promises) : ret;
+
 }

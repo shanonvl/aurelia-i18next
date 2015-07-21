@@ -7,13 +7,6 @@ export class I18N {
     this.i18next = i18n;
     this.ea = ea;
     this.Intl = window.Intl;
-
-    // check whether Intl is available, otherwise load the polyfill
-    if(window.Intl === undefined) {
-      System.import('Intl').then( (poly) => {
-        window.Intl = poly;
-      });
-    }
   }
 
   setup(options) {
