@@ -1,22 +1,29 @@
 'use strict';
 
-var _interopRequireWildcard = function (obj) { return obj && obj.__esModule ? obj : { 'default': obj }; };
-
-var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
-
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
 Object.defineProperty(exports, '__esModule', {
   value: true
 });
 
-var _I18N = require('./i18n');
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-var _import = require('./defaultTranslations/relative.time');
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 
-var translations = _interopRequireWildcard(_import);
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var _i18n = require('./i18n');
+
+var _defaultTranslationsRelativeTime = require('./defaultTranslations/relative.time');
+
+var translations = _interopRequireWildcard(_defaultTranslationsRelativeTime);
 
 var RelativeTime = (function () {
+  _createClass(RelativeTime, null, [{
+    key: 'inject',
+    value: function inject() {
+      return [_i18n.I18N];
+    }
+  }]);
+
   function RelativeTime(i18n) {
     var _this = this;
 
@@ -25,7 +32,7 @@ var RelativeTime = (function () {
     this.service = i18n;
 
     Object.keys(translations['default']).map(function (key) {
-      var translation = translations['default'][key].translation;
+      var translation = translations['default'][key]['translation'];
       var options = i18n.i18next.options;
 
       if (options.interpolationPrefix !== '__' || options.interpolationSuffix !== '__') {
@@ -78,11 +85,6 @@ var RelativeTime = (function () {
       } else {
         return null;
       }
-    }
-  }], [{
-    key: 'inject',
-    value: function inject() {
-      return [_I18N.I18N];
     }
   }]);
 

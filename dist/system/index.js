@@ -1,10 +1,12 @@
 System.register(['./i18n', 'aurelia-event-aggregator', './relativeTime', './df', './nf', './rt', './t'], function (_export) {
+  'use strict';
+
   var I18N, EventAggregator;
 
   _export('configure', configure);
 
   function configure(aurelia, cb) {
-    if (cb === undefined || typeof cb !== 'function') {
+    if (typeof cb !== 'function') {
       throw 'You need to provide a callback method to properly configure the library';
     }
 
@@ -12,10 +14,27 @@ System.register(['./i18n', 'aurelia-event-aggregator', './relativeTime', './df',
     aurelia.globalizeResources('./nf');
     aurelia.globalizeResources('./df');
     aurelia.globalizeResources('./rt');
-    var instance = new I18N(aurelia.container.get(EventAggregator));
-    aurelia.container.registerInstance(I18N, instance);
 
-    return cb(instance);
+    var ret = null,
+        onIntlLoaded = function onIntlLoaded() {
+      var instance = new I18N(aurelia.container.get(EventAggregator));
+      aurelia.container.registerInstance(I18N, instance);
+      var ret = cb(instance);
+      return ret && ret instanceof Promise ? ret : Promise.resolve();
+    };
+
+    if (!window.Intl) {
+      ret = new Promise(function (accept, reject) {
+        System['import']('Intl').then(function (poly) {
+          window.Intl = poly;
+          onIntlLoaded().then(accept, reject);
+        });
+      });
+    } else {
+      ret = onIntlLoaded();
+    }
+
+    return ret;
   }
 
   return {
@@ -36,8 +55,6 @@ System.register(['./i18n', 'aurelia-event-aggregator', './relativeTime', './df',
     }, function (_t) {
       _export('TValueConverter', _t.TValueConverter);
     }],
-    execute: function () {
-      'use strict';
-    }
+    execute: function () {}
   };
 });

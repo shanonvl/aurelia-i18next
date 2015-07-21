@@ -43,7 +43,7 @@ define(['exports', './i18n', 'aurelia-event-aggregator', './relativeTime', './df
   });
 
   function configure(aurelia, cb) {
-    if (cb === undefined || typeof cb !== 'function') {
+    if (typeof cb !== 'function') {
       throw 'You need to provide a callback method to properly configure the library';
     }
 
@@ -51,9 +51,26 @@ define(['exports', './i18n', 'aurelia-event-aggregator', './relativeTime', './df
     aurelia.globalizeResources('./nf');
     aurelia.globalizeResources('./df');
     aurelia.globalizeResources('./rt');
-    var instance = new _i18n.I18N(aurelia.container.get(_aureliaEventAggregator.EventAggregator));
-    aurelia.container.registerInstance(_i18n.I18N, instance);
 
-    return cb(instance);
+    var ret = null,
+        onIntlLoaded = function onIntlLoaded() {
+      var instance = new _i18n.I18N(aurelia.container.get(_aureliaEventAggregator.EventAggregator));
+      aurelia.container.registerInstance(_i18n.I18N, instance);
+      var ret = cb(instance);
+      return ret && ret instanceof Promise ? ret : Promise.resolve();
+    };
+
+    if (!window.Intl) {
+      ret = new Promise(function (accept, reject) {
+        System['import']('Intl').then(function (poly) {
+          window.Intl = poly;
+          onIntlLoaded().then(accept, reject);
+        });
+      });
+    } else {
+      ret = onIntlLoaded();
+    }
+
+    return ret;
   }
 });
